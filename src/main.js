@@ -8,59 +8,41 @@ function getComputerChoice() {
     return options[computer_choice];
 }
 
-function playRound(playerSelection, computerSelection) {
+function playRound(playerSelection) {
     const clean_player_selection = playerSelection.toLowerCase();
-    const clean_computer_selection = computerSelection.toLowerCase();
+    const clean_computer_selection = getComputerChoice().toLowerCase();
     const win_direction = ["rock", "scissors", "paper"];
     const player_index = win_direction.findIndex((x) => x === clean_player_selection); 
     const computer_index = win_direction.findIndex((x) => x === clean_computer_selection); 
     let won;
+    let results = document.querySelector("#results");
+    let running_score = document.querySelector("#running_score");
 
-    if(player_index+1 === computer_index || player_index-2 === computer_index){
-        won = true;
+    if(clean_player_selection == clean_computer_selection){
+        results.textContent = "you tied!";
+        return;
     }
-    else{
-        won = false;
-    }
+
+    won = (player_index+1 === computer_index || player_index-2 === computer_index) ? true : false;
 
     if(won){
-        console.log("You Won! " + win_direction[player_index] + " beats " + win_direction[computer_index]);
+        results.textContent = "You Won! " + win_direction[player_index] + " beats " + win_direction[computer_index];
+        if (++win_count >= 5)
+            results.textContent = "you Won the game! 5 wins to you!"
     }
     else{
-        console.log("You Lost! " + win_direction[computer_index] + " beats " + win_direction[player_index]);
+        results.textContent = "You Lost! " + win_direction[computer_index] + " beats " + win_direction[player_index];
+        if (++lose_count >= 5)
+            results.textContent = "you lost the game! 5 wins to bot!"
     }
-
-    return won;
+    running_score.textContent = `player score: ${win_count} computer score: ${lose_count}`
 }
 
-function game(){
-    let games_player_won = 0;
-    let games_computer_won = 0;
-    let won;
-
-    while(games_player_won < 5 && games_computer_won < 5){
-        let playerSelection = prompt("enter rock, paper, or scissors").toLowerCase();
-        let computerSelection = getComputerChoice();
-        if(playerSelection === computerSelection){
-            console.log("You Tied! play again");
-            continue;
-        }
-        won = playRound(playerSelection, computerSelection)
-        if(won){
-            games_player_won++;
-        }
-        else{
-            games_computer_won++;
-        }
-    }
-
-    if(games_player_won === 5){
-        console.log("YOU WIN");
-    }
-    else{
-        console.log("YOU LOSE :(");
-    }
-}
- 
-
-game();
+const rock_button = document.querySelector("#rock");
+const paper_button = document.querySelector("#paper");
+const scissors_button = document.querySelector("#scissors");
+let win_count = 0;
+let lose_count = 0;
+rock_button.addEventListener("click", () => playRound("rock"));
+paper_button.addEventListener("click", () => playRound("paper"));
+scissors_button.addEventListener("click", () => playRound("scissors"));
